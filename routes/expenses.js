@@ -1,5 +1,6 @@
 const express = require("express");
 const Expense = require("../models/Expense");
+const User = require("../models/User");
 
 const router = express.Router();
 
@@ -18,10 +19,14 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
     try {
         const expense = new Expense(req.body);
-        await expense.save();
-        res.status(201).json(expense);
+        await User.findOne({ username: "eloi" }, (error, user) => {
+            user.expenses.push(expense);
+            user.save();
+            res.status(201).json(expense);
+        });
+        // await expense.save();
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 });
 
@@ -34,7 +39,7 @@ router.delete("/", async (req, res) => {
             res.status(202).json(expense);
         });
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 });
 
