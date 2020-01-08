@@ -1,17 +1,19 @@
 const express = require("express");
 const User = require("../models/User");
+const UserDBManager = require("../db/UserDBManager");
 
 const router = express.Router();
 
 /* GET users listing. */
 router.get("/", (req, res) => {
-    try {
-        User.find({}, (err, users) => {
+    UserDBManager.getAll(
+        users => {
             res.json(users);
-        });
-    } catch (error) {
-        res.status(400).json(error);
-    }
+        },
+        error => {
+            res.status(400).json(error);
+        }
+    );
 });
 
 module.exports = router;
