@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Expense = require("./Expense");
 
 const userSchema = mongoose.Schema({
     username: {
@@ -7,7 +6,7 @@ const userSchema = mongoose.Schema({
         unique: true,
         required: true
     },
-    expenses: [Expense.schema]
+    expenses: [{ type: mongoose.Schema.ObjectId, ref: "Expense" }]
 });
 
 const User = mongoose.model("User", userSchema);

@@ -4,6 +4,10 @@ const expenseSchema = mongoose.Schema({
     amount: {
         type: Number,
         required: true
+    },
+    date: {
+        type: Date,
+        default: Date.now
     }
 });
 

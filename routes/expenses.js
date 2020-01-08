@@ -4,39 +4,47 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-/* GET expenses listing. */
+/* GET List expenses of the logged user. */
 router.get("/", (req, res) => {
     try {
-        Expense.find({}, (err, expenses) => {
-            res.json(expenses);
-        });
+        User.findOne({ username: "eloi" })
+            .populate("expenses")
+            .exec((error, user) => {
+                res.json(user.expenses);
+            });
     } catch (error) {
         res.status(400).json(error);
     }
 });
 
-/* POST new expense. */
+/* POST New expense for the logged user. */
 router.post("/", async (req, res) => {
     try {
         const expense = new Expense(req.body);
-        await User.findOne({ username: "eloi" }, (error, user) => {
-            user.expenses.push(expense);
-            user.save();
-            res.status(201).json(expense);
+        User.findOne({ username: "eloi" }, (error, user) => {
+            expense.save().then(error => {
+                user.expenses.push(expense);
+                user.save();
+                res.status(201).json(expense);
+            });
         });
-        // await expense.save();
     } catch (error) {
         res.status(400).json(error);
     }
 });
 
-/* DELETE remove expense. */
+/* DELETE Remove the specified expense from the logged user. */
 router.delete("/", async (req, res) => {
     try {
         const id = req.body.id;
         Expense.findById(id, (err, expense) => {
-            expense.remove();
-            res.status(202).json(expense);
+            if (!expense || expense === undefined) {
+                res.status(404).json({ message: "There is no expense with the specified id" });
+            }
+            User.update({}, { $pull: { expenses: { $in: expense._id } } }, error => {
+                expense.remove();
+                res.status(202).json(expense);
+            });
         });
     } catch (error) {
         res.status(400).json(error);
