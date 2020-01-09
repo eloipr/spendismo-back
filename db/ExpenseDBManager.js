@@ -7,6 +7,7 @@ const ExpenseDBManager = {
             User.findOne({ username: username })
                 .populate("expenses")
                 .exec((error, user) => {
+                    if (error) throw error;
                     callback(user.expenses);
                 });
         } catch (error) {
