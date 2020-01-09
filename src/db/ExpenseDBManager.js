@@ -2,46 +2,40 @@ const Expense = require("../models/Expense");
 const User = require("../models/User");
 
 const ExpenseDBManager = {
-    getAll: (username, callback, errorCallback) => {
-        try {
-            User.findOne({ username: username })
-                .populate("expenses")
-                .exec((error, user) => {
-                    if (error) throw error;
-                    callback(user.expenses);
-                });
-        } catch (error) {
-            errorCallback(error);
-        }
-    },
-    create: (username, expenseData, callback, errorCallback) => {
-        try {
-            const expense = new Expense(expenseData);
-            User.findOne({ username: username }, (error, user) => {
-                expense.save().then(error => {
-                    user.expenses.push(expense);
-                    user.save();
-                    callback(expense);
-                });
-            });
-        } catch (error) {
-            errorCallback(error);
-        }
-    },
-    delete: (id, callback, errorCallback) => {
-        try {
-            Expense.findById(id, (error, expense) => {
-                if (!expense || expense === undefined) {
-                    errorCallback(error);
+    /* Returns a Promise with all the expenses for the specified user */
+    getAll: username => {
+        return User.findOne({ username: username })
+            .populate("expenses")
+            .exec()
+            .then(user => {
+                if (user) {
+                    return user.expenses;
+                } else {
+                    throw Error("The user '" + username + "'doesn't exist");
                 }
-                User.update({}, { $pull: { expenses: { $in: expense._id } } }, error => {
-                    expense.remove();
-                    callback(expense);
-                });
             });
-        } catch (error) {
-            errorCallback(error);
-        }
+    },
+    /* Creates a new expense for the specified user */
+    create: (username, expenseData) => {
+        const expense = new Expense(expenseData);
+        return User.findOne({ username: username })
+            .then(user => {
+                if (user) {
+                    user.expenses.push(expense);
+                    return user.save();
+                } else {
+                    throw Error("The user '" + username + "'doesn't exist");
+                }
+            })
+            .then(() => {
+                return expense.save();
+            });
+    },
+    /* Deletes the specified expense */
+    delete: (username, id) => {
+        return User.update({ username: username }, { $pull: { expenses: { $in: id } } }).then(() => {
+            return Expense.findByIdAndDelete(id);
+        });
     }
 };
 
