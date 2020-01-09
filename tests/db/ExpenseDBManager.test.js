@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const config = require("config");
-const Expense = require("../../models/Expense");
-const User = require("../../models/User");
-const ExpenseDBManager = require("../../db/ExpenseDBManager");
+const Expense = require("../../src/models/Expense");
+const User = require("../../src/models/User");
+const ExpenseDBManager = require("../../src/db/ExpenseDBManager");
 
 createExpense = async (username, expense) => {
     // await User.findOne({ username: username }, async (error, user) => {
