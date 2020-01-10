@@ -1,16 +1,7 @@
-const mongoose = require("mongoose");
-const config = require("config");
+const TestHelper = require("../testHelper");
 const Expense = require("../../src/models/Expense");
 const User = require("../../src/models/User");
-const ExpenseDBManager = require("../../src/db/ExpenseDBManager");
-
-removeAllCollections = async () => {
-    const collections = Object.keys(mongoose.connection.collections);
-    for (const collectionName of collections) {
-        const collection = mongoose.connection.collections[collectionName];
-        await collection.deleteMany();
-    }
-};
+const ExpenseDBManager = require("../../src/db/expenseDBManager");
 
 describe("ExpenseDBManager", () => {
     const username1 = "Eloi";
@@ -18,10 +9,7 @@ describe("ExpenseDBManager", () => {
     const expense = new Expense({ name: "test-expense", amount: 20 });
 
     beforeAll(async () => {
-        await mongoose.connect(`${config.get("db.url")}/${config.get("db.name")}`, {
-            useNewUrlParser: true,
-            useCreateIndex: true
-        });
+        TestHelper.initDBConnection();
 
         const user1 = new User({ username: username1 });
         const user2 = new User({ username: username2 });
@@ -44,7 +32,7 @@ describe("ExpenseDBManager", () => {
     });
 
     afterAll(async () => {
-        await removeAllCollections();
+        return TestHelper.finishDBConnection();
     });
 
     describe("#getAll expenses of the specified user", () => {
@@ -86,6 +74,11 @@ describe("ExpenseDBManager", () => {
         it("should return the deleted expense", () => {
             return ExpenseDBManager.delete(username1, expense._id).then(deletedExpense => {
                 expect(JSON.stringify(deletedExpense)).toEqual(JSON.stringify(expense));
+            });
+        });
+        it("should throw an error when the user doesn't exist", () => {
+            return ExpenseDBManager.delete("nonExistentUser", expense._id).catch(error => {
+                expect(error).toBeInstanceOf(Error);
             });
         });
     });

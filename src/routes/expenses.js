@@ -1,7 +1,5 @@
 const express = require("express");
-const Expense = require("../models/Expense");
-const User = require("../models/User");
-const ExpenseDBManager = require("../db/ExpenseDBManager");
+const ExpenseDBManager = require("../db/expenseDBManager");
 
 const router = express.Router();
 
