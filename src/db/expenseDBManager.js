@@ -11,7 +11,7 @@ const ExpenseDBManager = {
                 if (user) {
                     return user.expenses;
                 } else {
-                    throw new Error("The user '" + email + "'doesn't exist");
+                    throw new Error({ error: "The user '" + email + "'doesn't exist" });
                 }
             });
     },
@@ -24,7 +24,7 @@ const ExpenseDBManager = {
                     user.expenses.push(expense);
                     return user.save();
                 } else {
-                    throw new Error("The user '" + email + "'doesn't exist");
+                    throw new Error({ error: "The user '" + email + "'doesn't exist" });
                 }
             })
             .then(() => {
