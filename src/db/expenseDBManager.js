@@ -33,7 +33,7 @@ const ExpenseDBManager = {
     },
     /* Deletes the specified expense */
     delete: (username, id) => {
-        return User.updateMany({ username: username }, { $pull: { expenses: { $in: id } } }).then(() => {
+        return User.findOneAndUpdate({ username: username }, { $pull: { expenses: { _id: id } } }).then(() => {
             return Expense.findByIdAndDelete(id);
         });
     }

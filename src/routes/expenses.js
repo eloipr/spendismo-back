@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
 
 /* DELETE Remove the specified expense from the logged user. */
 router.delete("/", async (req, res) => {
-    ExpenseDBManager.delete(req.body.id)
+    ExpenseDBManager.delete("eloi", req.body.id)
         .then(expense => {
             res.status(200).json(expense);
         })
