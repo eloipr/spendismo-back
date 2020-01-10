@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("./Expense");
 
 const userSchema = mongoose.Schema({
     username: {

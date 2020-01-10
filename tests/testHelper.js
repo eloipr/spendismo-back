@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const config = require("config");
 
 const testHelper = {
-    initDBConnection: () => {
-        mongoose.connect(`${config.get("db.url")}/${config.get("db.name")}`, {
+    initDBConnection: dbName => {
+        mongoose.connect(`${config.get("db.url")}/${dbName}`, {
             useNewUrlParser: true,
             useCreateIndex: true
         });

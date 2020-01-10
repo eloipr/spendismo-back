@@ -9,7 +9,7 @@ describe("ExpenseDBManager", () => {
     const expense = new Expense({ name: "test-expense", amount: 20 });
 
     beforeAll(async () => {
-        TestHelper.initDBConnection();
+        TestHelper.initDBConnection("expenseDBManagerTest");
 
         const user1 = new User({ username: username1 });
         const user2 = new User({ username: username2 });

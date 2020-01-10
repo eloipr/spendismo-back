@@ -5,14 +5,13 @@ const router = express.Router();
 
 /* GET users listing. */
 router.get("/", (req, res) => {
-    UserDBManager.getAll(
-        users => {
+    UserDBManager.getAll()
+        .then(users => {
             res.json(users);
-        },
-        error => {
+        })
+        .catch(error => {
             res.status(400).json(error);
-        }
-    );
+        });
 });
 
 module.exports = router;
