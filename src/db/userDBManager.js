@@ -6,6 +6,10 @@ const UserDBManager = {
         return User.find({})
             .populate("expenses")
             .exec();
+    },
+    create: userData => {
+        const user = new User(userData);
+        return User.create(user);
     }
 };
 
