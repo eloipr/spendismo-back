@@ -4,15 +4,15 @@ const User = require("../../src/models/User");
 const ExpenseDBManager = require("../../src/db/expenseDBManager");
 
 describe("ExpenseDBManager", () => {
-    const username1 = "Eloi";
-    const username2 = "Miquel";
+    const userData1 = { email: "eloi@gmail.com", username: "epardo", password: "1234" };
+    const userData2 = { email: "miquel@gmail.com", username: "miki", password: "4567" };
     const expense = new Expense({ name: "test-expense", amount: 20 });
 
     beforeAll(async () => {
         TestHelper.initDBConnection("expenseDBManagerTest");
 
-        const user1 = new User({ username: username1 });
-        const user2 = new User({ username: username2 });
+        const user1 = new User(userData1);
+        const user2 = new User(userData2);
 
         return User.init()
             .then(() => {
@@ -37,7 +37,7 @@ describe("ExpenseDBManager", () => {
 
     describe("#getAll expenses of the specified user", () => {
         it("should return 0 expenses without errors", () => {
-            return ExpenseDBManager.getAll(username2).then(expenses => {
+            return ExpenseDBManager.getAll(userData2.email).then(expenses => {
                 expect(expenses.length).toBe(0);
             });
         });
@@ -49,7 +49,7 @@ describe("ExpenseDBManager", () => {
         });
 
         it("should return 1 expense without errors", () => {
-            return ExpenseDBManager.getAll(username1).then(expenses => {
+            return ExpenseDBManager.getAll(userData1.email).then(expenses => {
                 expect(JSON.stringify(expenses[0])).toEqual(JSON.stringify(expense));
             });
         });
@@ -57,7 +57,7 @@ describe("ExpenseDBManager", () => {
 
     describe("#create new expense for the specified user", () => {
         it("should return the created expense", () => {
-            return ExpenseDBManager.create(username1, { amount: 20, name: "test-expense" }).then(newExpense => {
+            return ExpenseDBManager.create(userData1.email, { amount: 20, name: "test-expense" }).then(newExpense => {
                 expect(newExpense.amount).toBe(20);
                 expect(newExpense.name).toBe("test-expense");
             });
@@ -72,7 +72,7 @@ describe("ExpenseDBManager", () => {
 
     describe("#delete an expense for the specified user", () => {
         it("should return the deleted expense", () => {
-            return ExpenseDBManager.delete(username1, expense._id).then(deletedExpense => {
+            return ExpenseDBManager.delete(userData1.email, expense._id).then(deletedExpense => {
                 expect(JSON.stringify(deletedExpense)).toEqual(JSON.stringify(expense));
             });
         });

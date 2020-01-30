@@ -5,7 +5,7 @@ const router = express.Router();
 
 /* GET List expenses of the logged user. */
 router.get("/", (req, res) => {
-    ExpenseDBManager.getAll("eloi")
+    ExpenseDBManager.getAll("eloi@gmail.com")
         .then(expenses => {
             res.json(expenses);
         })
@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
 
 /* POST New expense for the logged user. */
 router.post("/", async (req, res) => {
-    ExpenseDBManager.create("eloi", req.body)
+    ExpenseDBManager.create("eloi@gmail.com", req.body)
         .then(expense => {
             res.status(201).json(expense);
         })
@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
 
 /* DELETE Remove the specified expense from the logged user. */
 router.delete("/", async (req, res) => {
-    ExpenseDBManager.delete("eloi", req.body.id)
+    ExpenseDBManager.delete("eloi@gmail.com", req.body.id)
         .then(expense => {
             res.status(200).json(expense);
         })
