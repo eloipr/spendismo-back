@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start-dev": "NODE_ENV=development nodemon ./bin/www",
-    "start-test": "NODE_ENV=test nodemon ./bin/www",
+    "start-dev": "NODE_ENV=development nodemon ./src/bin/www",
+    "start-test": "NODE_ENV=test nodemon ./src/bin/www",
     "test": "jest"
   },
   "dependencies": {
