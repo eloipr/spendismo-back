@@ -1,4 +1,9 @@
 const express = require("express");
+<<<<<<< HEAD:src/app.js
+=======
+const cors = require("cors");
+const path = require("path");
+>>>>>>> master:app.js
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const logger = require("morgan");
@@ -23,6 +28,7 @@ app.use(
         saveUninitialized: false
     })
 );
+app.use(cors());
 
 app.use("/expenses", expensesRouter);
 app.use("/users", usersRouter);
