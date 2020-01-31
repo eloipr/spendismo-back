@@ -31,6 +31,10 @@ const ExpenseDBManager = {
                 return expense.save();
             });
     },
+    /* Updates the specified expense */
+    update: (expenseId, expenseData) => {
+        return Expense.findByIdAndUpdate(expenseId, expenseData);
+    },
     /* Deletes the specified expense */
     delete: (email, id) => {
         return User.findOneAndUpdate({ email: email }, { $pull: { expenses: { _id: id } } }).then(() => {

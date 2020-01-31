@@ -25,6 +25,18 @@ router.post("/", async (req, res) => {
         });
 });
 
+/* UPDATE The expense with id == expense_id */
+router.patch("/:expense_id", (req, res) => {
+    const expenseId = req.params.expense_id;
+    ExpenseDBManager.update(expenseId, req.body)
+        .then(expense => {
+            res.status(200).json(expense);
+        })
+        .catch(error => {
+            res.status(400).json(error);
+        });
+});
+
 /* DELETE Remove the specified expense from the logged user. */
 router.delete("/", async (req, res) => {
     ExpenseDBManager.delete("eloi@gmail.com", req.body.id)
