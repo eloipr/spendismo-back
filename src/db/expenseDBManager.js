@@ -3,22 +3,22 @@ const User = require("../models/User");
 
 const ExpenseDBManager = {
     /* Returns a Promise with all the expenses for the specified user */
-    getAll: email => {
-        return User.findOne({ email: email })
+    getAll: userId => {
+        return User.findById(userId)
             .populate({ path: "expenses", options: { sort: { date: -1 } } })
             .exec()
             .then(user => {
                 if (user) {
                     return user.expenses;
                 } else {
-                    throw new Error({ error: "The user '" + email + "'doesn't exist" });
+                    throw new Error({ error: "The specified user doesn't exist" });
                 }
             });
     },
     /* Creates a new expense for the specified user */
-    create: (email, expenseData) => {
+    create: (userId, expenseData) => {
         const expense = new Expense(expenseData);
-        return User.findOne({ email: email })
+        return User.findById(userId)
             .then(user => {
                 if (user) {
                     user.expenses.push(expense);
@@ -36,9 +36,9 @@ const ExpenseDBManager = {
         return Expense.findByIdAndUpdate(expenseId, expenseData);
     },
     /* Deletes the specified expense */
-    delete: (email, id) => {
-        return User.findOneAndUpdate({ email: email }, { $pull: { expenses: { _id: id } } }).then(() => {
-            return Expense.findByIdAndDelete(id);
+    delete: (userId, expenseId) => {
+        return User.findByIdAndUpdate(userId, { $pull: { expenses: { _id: expenseId } } }).then(() => {
+            return Expense.findByIdAndDelete(expenseId);
         });
     }
 };

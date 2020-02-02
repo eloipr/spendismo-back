@@ -3,12 +3,17 @@ const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require("./models/User");
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+    done(null, user._id);
 });
 
-passport.deserializeUser((user, done) => {
-    console.log(user);
-    done(null, user);
+passport.deserializeUser((id, done) => {
+    User.findById(id)
+        .then(user => {
+            done(null, user);
+        })
+        .catch(e => {
+            done(new Error("Failed to deserialize the user"));
+        });
 });
 
 passport.use(
@@ -17,10 +22,9 @@ passport.use(
             clientID: "510433696275222",
             clientSecret: "2d79251383b78dca8d98b8a78b4063c6",
             callbackURL: "/auth/facebook/callback",
-            profileFields: ["id", "email", "name", "displayName"]
+            profileFields: ["id", "email", "name"]
         },
         async (accessToken, refreshToken, profile, done) => {
-            process.nextTick(() => console.log(profile));
             const currentUser = await User.findOne({ facebookId: profile.id });
             if (!currentUser) {
                 const newUser = await new User({

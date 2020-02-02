@@ -16,13 +16,17 @@ router.post("/sign-in", (req, res) => {
         });
 });
 
+router.get("is-authenticated", (req, res) => {
+    res.json({ isAuthenticated: req.isAuthenticated() });
+});
+
 router.get("/facebook", passport.authenticate("facebook", { scope: ["email"] }));
 
 router.get(
     "/facebook/callback",
     passport.authenticate("facebook", {
-        successRedirect: "http://127.0.0.1:51108/dashboard",
-        failureRedirect: "http://127.0.0.1:51108/sign-in"
+        successRedirect: "http://localhost:3000/",
+        failureRedirect: "http://localhost:3000/sign-in"
     })
 );
 

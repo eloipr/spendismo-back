@@ -3,10 +3,15 @@ const ExpenseDBManager = require("../db/expenseDBManager");
 
 const router = express.Router();
 
+const isLoggedIn = (req, res, next) => {
+    if (req.isAuthenticated()) return next();
+    res.status(400).json(new Error("Unauthorized"));
+};
+
 /* GET List expenses of the logged user. */
-router.get("/", (req, res) => {
-    console.log(req.user);
-    ExpenseDBManager.getAll("eloi@gmail.com")
+router.get("/", isLoggedIn, (req, res) => {
+    const loggedUser = req.user;
+    ExpenseDBManager.getAll(loggedUser._id)
         .then(expenses => {
             res.json(expenses);
         })
@@ -16,8 +21,9 @@ router.get("/", (req, res) => {
 });
 
 /* POST New expense for the logged user. */
-router.post("/", (req, res) => {
-    ExpenseDBManager.create("eloi@gmail.com", req.body)
+router.post("/", isLoggedIn, (req, res) => {
+    const loggedUser = req.user;
+    ExpenseDBManager.create(loggedUser._id, req.body)
         .then(expense => {
             res.status(201).json(expense);
         })
@@ -27,7 +33,7 @@ router.post("/", (req, res) => {
 });
 
 /* UPDATE The expense with id == expense_id */
-router.patch("/:expense_id", (req, res) => {
+router.patch("/:expense_id", isLoggedIn, (req, res) => {
     const expenseId = req.params.expense_id;
     ExpenseDBManager.update(expenseId, req.body)
         .then(expense => {
@@ -39,9 +45,10 @@ router.patch("/:expense_id", (req, res) => {
 });
 
 /* DELETE Remove the specified expense from the logged user. */
-router.delete("/:expense_id", (req, res) => {
+router.delete("/:expense_id", isLoggedIn, (req, res) => {
+    const loggedUser = req.user;
     const expenseId = req.params.expense_id;
-    ExpenseDBManager.delete("eloi@gmail.com", expenseId)
+    ExpenseDBManager.delete(loggedUser._id, expenseId)
         .then(expense => {
             res.status(200).json(expense);
         })
