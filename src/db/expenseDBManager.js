@@ -5,7 +5,7 @@ const ExpenseDBManager = {
     /* Returns a Promise with all the expenses for the specified user */
     getAll: email => {
         return User.findOne({ email: email })
-            .populate("expenses")
+            .populate({ path: "expenses", options: { sort: { date: -1 } } })
             .exec()
             .then(user => {
                 if (user) {

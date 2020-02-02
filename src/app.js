@@ -3,6 +3,8 @@ const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const passport = require("passport");
+const passportSetup = require("./passport-setup");
 const logger = require("morgan");
 
 const expensesRouter = require("./routes/expenses");
@@ -26,9 +28,11 @@ app.use(
     })
 );
 app.use(cors());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/expenses", expensesRouter);
 app.use("/users", usersRouter);
-app.use("/", authRouter);
+app.use("/auth", authRouter);
 
 module.exports = app;

@@ -5,7 +5,7 @@ const DBErrorHandler = require("../errors/dbErrorHandler");
 require("./Expense");
 
 const userSchema = mongoose.Schema({
-    username: {
+    name: {
         type: String,
         required: true
     },
@@ -19,9 +19,9 @@ const userSchema = mongoose.Schema({
             }
         }
     },
-    password: {
+    facebookId: {
         type: String,
-        required: true
+        unique: true
     },
     expenses: [{ type: mongoose.Schema.ObjectId, ref: "Expense" }]
 });
