@@ -16,7 +16,12 @@ router.post("/sign-in", (req, res) => {
         });
 });
 
-router.get("is-authenticated", (req, res) => {
+router.post("/logout", (req, res) => {
+    req.logout();
+    res.json({ message: "Logout successfully" });
+});
+
+router.get("/is-authenticated", (req, res) => {
     res.json({ isAuthenticated: req.isAuthenticated() });
 });
 
