@@ -15,6 +15,28 @@ const ExpenseDBManager = {
                 }
             });
     },
+    getByMonth: (userId, month) => {
+        return User.findById(userId)
+            .populate({
+                path: "expenses",
+                match: {
+                    $eq: [{ $month: "$date" }, parseInt(month)]
+                },
+                // match: {
+                //     date: { $gte: new Date(`2020-${month}-01`), $lte: new Date(`2020-${month}-31`) }
+                // },
+                options: { sort: { date: -1 } }
+            })
+            .exec()
+            .then(user => {
+                if (user) {
+                    console.log(user);
+                    return user.expenses;
+                } else {
+                    throw new Error({ error: "The specified user doesn't exist" });
+                }
+            });
+    },
     /* Creates a new expense for the specified user */
     create: (userId, expenseData) => {
         const expense = new Expense(expenseData);

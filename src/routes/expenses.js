@@ -20,6 +20,19 @@ router.get("/", isLoggedIn, (req, res) => {
         });
 });
 
+/* GET List the month expenses of the logged user. */
+router.get("/month/:month", isLoggedIn, (req, res) => {
+    const month = req.params.month;
+    const loggedUser = req.user;
+    ExpenseDBManager.getByMonth(loggedUser._id, month)
+        .then(expenses => {
+            res.json(expenses);
+        })
+        .catch(error => {
+            res.status(400).json(error);
+        });
+});
+
 /* POST New expense for the logged user. */
 router.post("/", isLoggedIn, (req, res) => {
     const loggedUser = req.user;
