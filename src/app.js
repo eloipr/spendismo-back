@@ -9,6 +9,7 @@ const session = require("express-session");
 const logger = require("morgan");
 
 const expensesRouter = require("./routes/expenses");
+const categoriesRouter = require("./routes/categories");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 
@@ -41,7 +42,13 @@ app.use(
     })
 );
 
-app.use("/expenses", expensesRouter);
+const isLoggedIn = (req, res, next) => {
+    if (req.isAuthenticated()) return next();
+    res.status(400).json(new Error("Unauthorized"));
+};
+
+app.use("/expenses", isLoggedIn, expensesRouter);
+app.use("/categories", isLoggedIn, categoriesRouter);
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 

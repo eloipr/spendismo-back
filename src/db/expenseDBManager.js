@@ -1,5 +1,5 @@
-const Expense = require("../models/Expense");
-const User = require("../models/User");
+const Expense = require("./../models/Expense");
+const User = require("./../models/User");
 
 const ExpenseDBManager = {
     /* Returns a Promise with all the expenses for the specified user */
@@ -8,33 +8,35 @@ const ExpenseDBManager = {
             .populate({ path: "expenses", options: { sort: { date: -1 } } })
             .exec()
             .then(user => {
-                if (user) {
-                    return user.expenses;
-                } else {
+                if (!user) {
                     throw new Error({ error: "The specified user doesn't exist" });
                 }
+                return user.expenses;
             });
     },
     getByMonth: (userId, month) => {
-        return User.findById(userId)
-            .populate({
-                path: "expenses",
-                match: {
-                    $eq: [{ $month: "$date" }, parseInt(month)]
-                },
-                // match: {
-                //     date: { $gte: new Date(`2020-${month}-01`), $lte: new Date(`2020-${month}-31`) }
-                // },
-                options: { sort: { date: -1 } }
-            })
-            .exec()
-            .then(user => {
-                if (user) {
-                    console.log(user);
-                    return user.expenses;
-                } else {
-                    throw new Error({ error: "The specified user doesn't exist" });
+        return User.aggregate([
+            { $match: { _id: userId } },
+            { $lookup: { from: "expenses", localField: "expenses", foreignField: "_id", as: "expenses" } },
+            {
+                $project: {
+                    expenses: {
+                        $filter: {
+                            input: "$expenses",
+                            as: "expense",
+                            cond: {
+                                $eq: [{ $month: "$$expense.date" }, parseInt(month)]
+                            }
+                        }
+                    }
                 }
+            }
+        ])
+            .exec()
+            .then(result => {
+                if (result.length > 0) {
+                    return result[0].expenses;
+                } else return [];
             });
     },
     /* Creates a new expense for the specified user */
@@ -42,12 +44,11 @@ const ExpenseDBManager = {
         const expense = new Expense(expenseData);
         return User.findById(userId)
             .then(user => {
-                if (user) {
-                    user.expenses.push(expense);
-                    return user.save();
-                } else {
-                    throw new Error({ error: "The user '" + email + "'doesn't exist" });
+                if (!user) {
+                    throw new Error({ error: "The specified user doesn't exist" });
                 }
+                user.expenses.push(expense);
+                return user.save();
             })
             .then(() => {
                 return expense.save();
