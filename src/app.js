@@ -9,7 +9,6 @@ const session = require("express-session");
 const logger = require("morgan");
 
 const expensesRouter = require("./routes/expenses");
-const categoriesRouter = require("./routes/categories");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 
@@ -48,7 +47,6 @@ const isLoggedIn = (req, res, next) => {
 };
 
 app.use("/expenses", isLoggedIn, expensesRouter);
-app.use("/categories", isLoggedIn, categoriesRouter);
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 

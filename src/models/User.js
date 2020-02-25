@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const DBErrorHandler = require("../errors/dbErrorHandler");
-require("./Category");
 require("./Expense");
 
 const userSchema = mongoose.Schema({
@@ -24,8 +23,7 @@ const userSchema = mongoose.Schema({
         type: String,
         unique: true
     },
-    expenses: [{ type: mongoose.Schema.ObjectId, ref: "Expense" }],
-    categories: [{ type: mongoose.Schema.ObjectId, ref: "Category" }]
+    expenses: [{ type: mongoose.Schema.ObjectId, ref: "Expense" }]
 });
 
 userSchema.pre("save", async function(next) {

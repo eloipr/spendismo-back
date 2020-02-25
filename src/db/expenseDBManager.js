@@ -52,6 +52,9 @@ const ExpenseDBManager = {
             })
             .then(() => {
                 return expense.save();
+            })
+            .catch(error => {
+                throw error;
             });
     },
     /* Updates the specified expense */
