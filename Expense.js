@@ -5,11 +5,10 @@ const expenseSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    type: {
-        // expense or income
-        type: String,
+    isIncome: {
+        type: Boolean,
         required: true,
-        default: "expense"
+        default: false
     },
     amount: {
         type: Number,
