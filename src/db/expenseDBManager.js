@@ -1,4 +1,4 @@
-const Expense = require("../../Expense");
+const Expense = require("./../models/Expense");
 const User = require("./../models/User");
 
 const ExpenseDBManager = {
